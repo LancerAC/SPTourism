@@ -1,8 +1,11 @@
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
+        //Все места
         Attraction attraction1 = new Attraction("Исаакиевский собор", 5.0, (byte) 10);
         Attraction attraction2 = new Attraction("Эрмитаж", 8.0, (byte) 11);
         Attraction attraction3 = new Attraction("Кунсткамера", 3.5, (byte) 4);
@@ -35,21 +38,22 @@ public class Main {
     public static void calculateOptimalRoute(List<Attraction> attractions){
 
         //Время на просмотр достопримечательностей (взято из условия)
-        int totalTime = 48 - 2*8;
+        int totalTime = 48 - 2 * 8;
 
-        double timeSpent = 0;
+        double[] timeSpent = {0};
 
-        List<Attraction> attractions1 = attractions.stream()
-                .sorted(Comparator.comparingInt(Attraction::getPriority).reversed()).toList();
+         attractions.stream()
+                .sorted(Comparator.comparingInt(Attraction::getPriority).reversed())
+                .filter(a -> {
+                    if (timeSpent[0] + a.getTime() <= totalTime) {
+                        timeSpent[0] += a.getTime();
+                        return true;
+                    }
+                    return false;
+                })
+                .forEach(System.out::println);
 
-        for (Attraction a: attractions1) {
-
-            if(timeSpent + a.getTime() <= totalTime) {
-                timeSpent += a.getTime();
-                System.out.println(a);
-
-            }
-        }
+        System.out.printf("Времени затрачено: %s%n", timeSpent[0]);
     }
 }
 
